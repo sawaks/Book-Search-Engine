@@ -8,7 +8,7 @@ const resolvers = {
         // get a single user by either their id or their username???
         me: async (parent, args, context) => {
             if (context.user) {
-                return User.findOne({ _id: context.user._id });
+                return User.findOne({ _id: context.user._id }).populate('savedBooks');
             }
             throw new AuthenticationError('You need to be logged in!');
         },
@@ -45,7 +45,7 @@ const resolvers = {
                     { _id: context.user._id },
                     {
                         $addToSet: {
-                            savedBooks: bookId, authors, description, title, image, link
+                            savedBooks: { bookId, authors, description, title, image, link }
                         }
                     },
                     {
@@ -57,11 +57,11 @@ const resolvers = {
             throw new AuthenticationError('You need to be logged in!');
         },
 
-        removeBook: async (parent, { bookId }, context) => {
+        removeBook: async (parent, { bookId, authors, description, title, image, link }, context) => {
             if (context.user) {
                 return User.findOneAndUpdate(
                     { _id: context.user._id },
-                    { $pull: { savedBooks: bookId } },
+                    { $pull: { savedBooks: { bookId, authors, description, title, image, link } } },
                     { new: true }
                 );
             }
