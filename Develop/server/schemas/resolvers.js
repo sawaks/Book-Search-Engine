@@ -6,6 +6,11 @@ const { signToken } = require('../utils/auth');
 const resolvers = {
     Query: {
         // get a single user by either their id or their username???
+
+        user: async (parent, { userId, username }) => {
+            return User.findOne({ _id: userId || username }).populate('savedBooks');
+        },
+
         me: async (parent, args, context) => {
             if (context.user) {
                 return User.findOne({ _id: context.user._id }).populate('savedBooks');
