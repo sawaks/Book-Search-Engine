@@ -18,8 +18,20 @@ import { GET_ME } from '../utils/queries';
 
 const SavedBooks = () => {
 
+
   const { loading, data } = useQuery(GET_ME);
-  const [removeBook] = useMutation(REMOVE_BOOK);
+  const [removeBook] = useMutation(REMOVE_BOOK, {
+    update(cache, { data: { removeBook } }) {
+      try {
+        cache.writeQuery({
+          query: GET_ME,
+          data: { me: removeBook },
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    },
+  });
 
 
   const handleDeleteBook = async (bookId) => {
@@ -35,7 +47,7 @@ const SavedBooks = () => {
       });
 
       removeBookId(bookId);
-      window.location.reload();
+      // window.location.reload();
 
     } catch (err) {
       console.error(err);
