@@ -35,7 +35,7 @@ const SavedBooks = () => {
       });
 
       removeBookId(bookId);
-      // window.location.reload();
+      window.location.reload(false);
 
     } catch (err) {
       console.error(err);
